@@ -1,0 +1,57 @@
+1.Create the following table with the mapping given below
+  Book-Master (book_name, author_name,  price,quantity).
+(i).Write a query to update the quantity by double in the table book.
+(ii).List all the book_ name whose price is greater than 400.
+(iii).Retrieve the list of author_ name whose first letter is ‘a’ along with the book_name and price.
+
+ create table book_master(book_name varchar2(20) not null,author_name varchar2(20) not null,price number,quantity  number);
+
+  i) update book_master set quantity=quantity*2;
+ ii)select book_name,price from book_master where price>400;
+iii) select book_name,author_name,price from book_master where author_name like 'A%';
+
+
+2.You are in charge of the University Marks Database,
+    Given a database containing 2 tables,
+      1)	Reg_Result (Regno, name, Maths, Maths_sess, OS, OS_sess, DBMS, DBMS_sess,  grand_tot)
+      2)	Imp_ Suppl_Result (regno, Maths, OS, DCD)
+    Your job is to write a PL SQL program which updates the second table in case of improvement or pass . 
+    Constraints: Minimum requirement for Passing in each subject is:
+        1.	  40/100 for theory
+        2.	  75/150  for both theory and sessional together.
+ Calculate grand_total only if student  attained minimum pass mark in all subjects  
+
+  create table reg_result (regno number primary key,name varchar2(20),maths number,maths_sess number,os number,os_sess number, dbms number,dbms_sess number ,grand_total number);
+  create table imp_suppl_result(regno number primary key,maths number ,os number,dcd number,foreign key (regno) references reg_result(regno));
+
+        		create or replace procedure imp_res is 
+        		begin
+        			for rec in (select r.regno,r.maths,r.maths_sess,r.os,r.os_sess,r.dbms,r.dbms_sess,r.grand_total,i.maths as imp_maths,i.os as imp_os,i.dcd as imp_dbms from reg_result r join imp_suppl_result i on r.regno=i.regno)
+        				LOOP
+        					
+        				if rec.imp_maths>rec.maths then
+        					update reg_result set maths=rec.imp_maths where regno=rec.regno;
+        				end if;
+        				
+        				if rec.imp_os>rec.os then
+        					update reg_result set os=rec.imp_os where regno=rec.regno;
+        				end if;
+        
+        				if rec.imp_dbms>rec.dbms then
+        					update reg_result set dbms=rec.imp_dbms where regno=rec.regno;
+        				end if;		
+        
+        
+        					if(rec.maths>=40 and (rec.maths+rec.maths_sess)>=75) and 
+        						(rec.os>=40 and (rec.os+rec.os_sess)>=75) and 
+        						(rec.dbms>=40 and (rec.dbms+rec.dbms_sess)>=75) then
+        
+        							update reg_result set grand_total=rec.maths+rec.maths_sess+rec.os+rec.os_sess+rec.dbms+rec.dbms_sess where regno=rec.regno;
+        					end if;
+        				end loop;
+        
+        				commit;
+        
+        			end;
+        			/
+
