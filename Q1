@@ -1,0 +1,50 @@
+1.Create the following table with the mapping given below
+  a. stu_details (reg _no, stu_name, DOB, Address,city)
+  b. mark_details (reg_no,mark1,mark 2,mark 3,total)
+    (i)  Find the percentage of marks of the student whose name is ‘Ann’
+    (ii)  Display the name and city of students who has scored more than 80 percentages for the exam.
+    (iii).Rename the table mark_details as ‘Stud_Marks’.
+
+ANS
+		CREATE TABLE stu_details (reg_no INT PRIMARY KEY,stu_name VARCHAR(50),DOB DATE,Address VARCHAR(100),city VARCHAR(50));
+		CREATE TABLE mark_details (reg_no INT PRIMARY KEY,mark1 INT,mark2 INT,mark3 INT,total INT);
+
+			i) select s.stu_name,((m.mark1+m.mark2+m.mark3)/total)*100 as percentage from stu_details s join mark_details m on m.reg_no = s.reg_no where stu_name= 'Ann';
+		 ii)select s.stu_name,s.city from stu_details s join mark_details m on m.reg_no = s.reg_no where (((m.mark1+m.mark2+m.mark3)/total)*100)>=80;
+																																				or
+				select stu_name,city from stu_details where reg_no in (select reg_no from mark_details where ((mark1+mark2+mark3)/total)*100 >= 80);
+		iii)alter table mark_details rename to stud_marks;
+
+2.Write a  program to find the largest and smallest of 3 numbers  from the table using procedure.
+
+	create table numbers(num1 int,num2 int,num3 int);
+
+				set serveroutput on;
+				
+				create or replace procedure find_num as
+					vnum1 numbers.num1%TYPE;
+					vnum2 numbers.num2%TYPE;
+					vnum3 numbers.num3%TYPE;
+					vmin number;
+					vmax number;
+				
+					cursor numc is
+						select num1,num2,num3 from numbers;
+				BEGIN
+					for rec in numc LOOP
+						vnum1 := rec.num1;
+						vnum2 := rec.num2;
+						vnum3 := rec.num3;
+				
+						vmin := LEAST(vnum1,vnum2,vnum3);
+				
+						vmax := GREATEST(vnum1,vnum2,vnum3);
+				
+						DBMS_OUTPUT.PUT_LINE('NUMBERS: ' || vnum1 || ', ' || vnum2 || ', ' || vnum3);
+				        DBMS_OUTPUT.PUT_LINE('MAXIMUM: ' || vmax);
+				        DBMS_OUTPUT.PUT_LINE('MINIMUM: ' || vmin);
+					END LOOP;
+				END;
+				/		
+
+execution:  @C:\hanoon\dbms\num.sql , exec num.sql
