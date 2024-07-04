@@ -1,0 +1,90 @@
+EXPERIMENT NO: 9
+AIM
+Create a trigger to print the following messages when insert, delete or update operation is
+performed on students table mentioned in the previous experiment for each tuple that is inserted,
+deleted or updated. Assume that semester grades of s1 and s2 are stored in students table along
+with Roll number and name of students.
+
+TABLE CREATION
+CREATE TABLE Students (roll_number INT,name VARCHAR(50), s1_grade INT,
+s2_grade INT);
+TABLE STRUCTURE
+SQL> desc students;
+Name Null? Type
+---------------------------------------------------------------------------------------------------------------
+ROLL_NUMBER NUMBER(38)
+NAME VARCHAR2(50)
+S1_GRADE NUMBER(38)
+S2_GRADE NUMBER(38)
+
+INSERTION
+INSERT INTO Students VALUES (101, 'John Doe', 9, 9);
+INSERT INTO Students VALUES (102, 'Jane Smith', 1, 7);
+INSERT INTO Students VALUES (103, 'Alice Johnson', 2, 6);
+INSERT INTO Students VALUES (104, 'Bob Smith', 7, 8);
+INSERT INTO Students VALUES (105, 'Emma Watson', 8, 6);
+SQL> select * from Students;
+ROLL_NUMBER NAME S1_GRADE S2_GRADE
+----------- -------------------------------------------------- ---------- -------------------
+
+101 John Doe 9 9
+102 Jane Smith 1 7
+103 Alice Johnson 2 6
+104 Bob Smith 7 8
+105 Emma Watson 8 6
+PROGRAM
+CREATE OR REPLACE TRIGGER students_trigger
+AFTER INSERT OR DELETE OR UPDATE ON Students
+FOR EACH ROW
+DECLARE
+v_action_msg VARCHAR2(100);
+BEGIN
+IF INSERTING THEN
+v_action_msg := 'Inserting ' || :NEW.name;
+ELSIF DELETING THEN
+v_action_msg := 'Deleting ' || :OLD.name;
+ELSIF UPDATING THEN
+IF :OLD.name != :NEW.name THEN
+v_action_msg := 'Updated to ' || :NEW.name;
+ELSE
+v_action_msg := 'Inserting ' || :NEW.name;
+END IF;
+END IF;
+DBMS_OUTPUT.PUT_LINE('Operation: ' || CASE
+WHEN INSERTING THEN 'Insert'
+WHEN DELETING THEN 'Delete'
+WHEN UPDATING THEN 'Update'
+END || ', Action/Message: ' || v_action_msg);
+END;
+/
+
+SQL> @/exp9.sql
+Trigger created.
+SQL> insert into students values (109, 'rohan', 10, 20);
+Operation: Insert, Action/Message: Inserting rohan
+
+1 row created.
+SQL> update students set s1_grade=10 where roll_number=102;
+Operation: Update, Action/Message: Inserting Jane Smith
+1 row updated.
+SQL> select * from students;
+ROLL_NUMBER NAME S1_GRADE S2_GRADE
+----------------------- --------------------------------------------------- -------------- ------------------
+101 John Doe 9 9
+102 Jane Smith 10 7
+103 Alice Johnson 2 6
+104 Bob Smith 7 8
+105 Emma Watson 8 6
+109 rohan 10 20
+6 rows selected.
+SQL> delete from students where roll_number = 109;
+Operation: Delete, Action/Message: Deleting rohan
+1 row deleted.
+SQL> select * from students;
+ROLL_NUMBER NAME S1_GRADE S2_GRADE
+----------------------- --------------------------------------------------- -------------- ------------------
+101 John Doe 9 9
+102 Jane Smith 10 7
+103 Alice Johnson 2 6
+104 Bob Smith 7 8
+105 Emma Watson 8 6
