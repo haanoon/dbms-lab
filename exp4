@@ -1,0 +1,222 @@
+EXPERIMENT NO:4
+CUSTOMER RELATIONS
+
+AIM
+Write queries to create and retrieve data from the customer relation using string operations
+TABLES
+SQL> create table customer4 ( cust_id int primary key,cust_name varchar(20),city varchar(20),amount
+int,discount int,salesman_id varchar(15));
+Table created.
+SQL> desc customer4;
+Name Null? Type
+----------------------------------------- -------- ----------------------------
+CUST_ID NOT NULL NUMBER(38)
+CUST_NAME VARCHAR2(20)
+CITY VARCHAR2(20)
+AMOUNT NUMBER(38)
+DISCOUNT NUMBER(38)
+SALESMAN_ID VARCHAR2(15)
+SQL> insert into customer4 values ( 100,'deepa','trivandrum',1050,2,'K0010');
+1 row created.
+SQL> insert into customer4 values ( 101,'don','trivandrum',8040,4,'K0010');
+1 row created.
+SQL> insert into customer4 values ( 102,'manacy','kollam',20030,6,'A200tmp');
+1 row created.
+SQL> insert into customer4 values ( 103,'karthika','ernakulam',8400,20,'EkmX1050');
+1 row created.
+SQL> insert into customer4 values ( 104,'tulasi','ernakulam',2500,2,'EkmY2342');
+1 row created.
+SQL> insert into customer4 values (105,'roy','trivandrum',2400,4,'L1045');
+1 row created.
+SQL> insert into customer4 values (106,'vivek','trivandrum',3200,8,'L1045');
+1 row created.
+
+SQL> insert into customer4 values ( 108,'bhasi','kottayam',12860,10,'KtmP1028');
+1 row created.
+SQL> insert into customer4 values ( 109,'anurag','kottayam',3860,12,'KtmB158tmp');
+1 row created.
+SQL> insert into customer4 values ( 110,'antony','kottayam',9800,8,'KtmP1028');
+1 row created.
+SQL> insert into customer4 values ( 111,'meera','trichur',6700,6,'R3085');
+1 row created.
+SQL> select * from customer4;
+CUST_ID CUST_NAME CITY AMOUNT DISCOUNT SALESMAN_ID
+---------- -------------------- -------------------- ---------- ---------------------- --------------------
+100 deepa trivandrum 1050 2 K0010
+101 don trivandrum 8040 4 K0010
+102 manacy kollam 20030 6 A200tmp
+103 karthika ernakulam 8400 20 EkmX1050
+104 tulasi ernakulam 2500 2 EkmY2342
+105 roy trivandrum 2400 4 L1045
+106 vivek trivandrum 3200 8 L1045
+108 bhasi kottayam 12860 10 KtmP1028
+109 anurag kottayam 3860 12 KtmB158tmp
+110 antony kottayam 9800 8 KtmP1028
+111 meera trichur 6700 6 R3085
+
+QUERIES
+1.Select all customers with a customername starting with "a"
+SQL> select * from customer4 where upper(substr(cust_name,1,1)) = 'A';
+CUST_ID CUST_NAME CITY AMOUNT DISCOUNT SALESMAN_ID
+---------- -------------------- -------------------- ---------- ---------- ---------------
+109 Anurag kottayam 3860 12 KtmB158tmp
+110 Antony kottayam 9800 8 KtmP1028
+
+2.Select all customers with a customername starting with "a" or "A"
+select * from customer4 where upper(substr(cust_name,1,1)) in ('a','A');
+CUST_ID CUST_NAME CITY AMOUNT DISCOUNT SALESMAN_ID
+---------- -------------------- -------------------- ---------- ---------- ---------------
+109 Anurag kottayam 3860 12 KtmB158tmp
+110 Antony kottayam 9800 8 KtmP1028
+
+3.Modify customer names such that all customer names start with a capital letter
+
+SQL> update customer4 set cust_name = initcap(cust_name);
+11 rows updated.
+SQL> select * from customer4;
+CUST_ID CUST_NAME CITY AMOUNT DISCOUNT SALESMAN_ID
+---------- -------------------- -------------------- ---------- ---------- ---------------
+100 Deepa trivandrum 1050 2 K0010
+101 Don trivandrum 8040 4 K0010
+102 Manacy kollam 20030 6 A200tmp
+103 Karthika ernakulam 8400 20 EkmX1050
+104 Tulasi ernakulam 2500 2 EkmY2342
+105 Roy trivandrum 2400 4 L1045
+106 Vivek trivandrum 3200 8 L1045
+108 Bhasi kottayam 12860 10 KtmP1028
+109 Anurag kottayam 3860 12 KtmB158tmp
+110 Antony kottayam 9800 8 KtmP1028
+111 Meera trichur 6700 6 R3085
+11 rows selected.
+4.Find city values ending with "a"
+SQL> select * from customer4 where upper(substr(city,-1)) = 'A';
+no rows selected
+5.Return first 3 characters of salesman_ID //left
+SQL> select substr(salesman_id,0,3) as name1 from customer4;
+NAME1
+------------
+K00
+K00
+A20
+Ekm
+Ekm
+L10
+L10
+Ktm
+Ktm
+Ktm
+R30
+11 rows selected.
+6.Find s salesmanids with "tmp" in any position
+SQL> SELECT * FROM customer4 WHERE INSTR(salesman_id, 'tmp') > 0;
+CUST_ID CUST_NAME CITY AMOUNT DISCOUNT SALESMAN_ID
+---------- -------------------- -------------------- ---------- ---------- --------------- -----------------------
+102 Manacy kollam 20030 6 A200tmp
+109 Anurag kottayam 3860 12 KtmB158tmp
+
+7.Find count of city values that start with "T"
+select count(*) from customer4 where UPPER(SUBSTR(City, 1, 1)) = 'T';
+COUNT(*)
+---------------
+5
+
+8.Select customer names starting with D and of atleast 4 characters
+SQL> select * from customer4 where upper(substr(cust_name,1,1)) = 'D' and length(cust_name)>=4;
+CUST_ID CUST_NAME CITY AMOUNT DISCOUNT SALESMAN_ID
+---------- -------------------- -------------------- ---------- ---------- ------------------------------------------
+100 Deepa trivandrum 1050 2 K0010
+
+9.Finds city values that start with "K" and are at least 2 characters in length
+SQL> select city from customer4 where UPPER(SUBSTR(city, 1, 1)) = 'K' and length(city) >= 2;
+CITY
+--------------------
+kollam
+kottayam
+kottayam
+kottayam
+
+10.. Finds city values that start with "K" and are at least 7 characters in length
+SQL> select city from customer4 where UPPER(SUBSTR(city, 1, 1)) = 'K' and length(city) >= 7;
+CITY
+--------------------
+kottayam
+kottayam
+kottayam
+
+11.Finds city values that start with "K" and ends with "m"
+SQL> select city from customer4 where upper(substr(city, 1, 1)) = 'K' and upper(substr(city, -1)) = 'M';
+CITY
+--------------------
+kollam
+kottayam
+kottayam
+kottayam
+
+12.Display salesman details with salesman_ID, total amount given as discount and maximum discount
+provided by him in percentage with % symbol
+SQL> select salesman_id,concat(sum(discount),'%') as total_discount,concat(max(discount),'%') as
+max_discount from customer4 group by salesman_id;
+SALESMAN_ID TOTAL_DISCOUNT MAX_DISCOUNT
+--------------- ----------------------------------------- -----------------------------------------
+A200tmp 6% 6%
+EkmX1050 20% 20%
+KtmB158tmp 12% 12%
+R3085 6% 6%
+KtmP1028 18% 10%
+K0010 6% 4%
+L1045 12% 8%
+EkmY2342 2% 2%
+8 rows selected.
+
+13.Display city names in uppercase
+SQL> select upper(city) as city_upper from customer4;
+CITY_UPPER
+--------------------
+TRIVANDRUM
+TRIVANDRUM
+KOLLAM
+ERNAKULAM
+ERNAKULAM
+TRIVANDRUM
+TRIVANDRUM
+KOTTAYAM
+KOTTAYAM
+KOTTAYAM
+TRICHUR
+11 rows selected.
+
+14.Update salesman_ID of all salesman from Ernakulam by removing the prefix "Ekm"
+SQL> update customer4 set salesman_id = replace(salesman_id,'Ekm','') where
+instr(salesman_id,'Ekm')>0;
+2 rows updated.
+SQL> select salesman_id from customer4;
+SALESMAN_ID
+---------------
+K0010
+K0010
+A200tmp
+X1050
+Y2342
+
+L1045
+L1045
+KtmP1028
+KtmB158tmp
+KtmP1028
+R3085
+11 rows selected.
+
+15.Display total sales amount of each salesperson till today with today's date in dd-mon-yyyy
+SQL> SELECT salesman_id,sum(amount),to_char(sysdate,'dd-month-yyyy') as current_date from
+customer4 group by salesman_id;
+SALESMAN_ID SUM(AMOUNT) CURRENT_DATE
+--------------- ----------- --------------------------------------------
+X1050 8400 04-april -2024
+A200tmp 20030 04-april -2024
+Y2342 2500 04-april -2024
+KtmB158tmp 3860 04-april -2024
+R3085 6700 04-april -2024
+KtmP1028 22660 04-april -2024
+K0010 9090 04-april -2024
+L1045 5600 04-april -2024
+8 rows selected.
