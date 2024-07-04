@@ -1,0 +1,171 @@
+EXPERIMENT NO: 10
+PL/SQL PROGRAM – RAILWAY RESERVATION SYSTEM
+
+AIM:
+a) Perform COMMIT and ROLLBACK operations in the Train table. The train number
+should be automatically incremented for each row insertion.
+TRAIN
+TNO Tname Tdate Destinstion Seats
+b) Write a PL/SQL program to implement the railway reservation system with PROCEDURE for
+reservation and cancellation.
+
+a)
+CREATE TABLE Train (
+TNO INT generated always as identity (start with 1 increment by 1),
+Tname VARCHAR(20),
+TDate DATE,
+Destination VARCHAR(20),
+
+Seats INT
+);
+SQL> insert into train (tname, tdate, destination, seats) values ('express1', '16-apr-2024', 'mumbai', 300);
+SQL> insert into train (tname, tdate, destination, seats) values ('express2', '16-apr-2024', 'chennai', 250);
+SQL> insert into train (tname, tdate, destination, seats) values ('express2', '17-apr-2024', 'delhi', 100);
+SQL> insert into train (tname, tdate, destination, seats) values ('express4', '19-apr-2024', 'kolkata', 100);
+SQL> select * from train;
+TNO TNAME TDATE DESTINATION SEATS
+---------- -------------------- --------- -------------------- ----------
+1 express1 16-APR-24 mumbai 300
+2 express2 16-APR-24 chennai 250
+3 express2 17-APR-24 delhi 100
+4 express4 19-APR-24 kolkata 100
+SQL>commit;
+Commit complete
+SQL> insert into train (tname, tdate, destination, seats) values ('express5', '20-apr-2024', 'kota', 300);
+SQL> select * from train;
+TNO TNAME TDATE DESTINATION SEATS
+---------- -------------------- --------- -------------------- ----------
+1 express1 16-APR-24 mumbai 300
+2 express2 16-APR-24 chennai 246
+3 express2 17-APR-24 delhi 100
+4 express4 19-APR-24 kolkata 100
+5 express5 20-APR-24 kota 300
+SQL> rollback;
+rollback complete
+SQL> select * from train;
+TNO TNAME TDATE DESTINATION SEATS
+---------- -------------------- --------- -------------------- ----------
+1 express1 16-APR-24 mumbai 300
+2 express2 16-APR-24 chennai 250
+3 express2 17-APR-24 delhi 100
+4 express4 19-APR-24 kolkata 100
+
+B)
+PROGRAM:
+CREATE OR REPLACE PROCEDURE ReserveTicket(
+
+p_train_number IN INT,
+p_seats_needed IN INT
+) AS
+v_available_seats INT;
+BEGIN
+-- Check available seats
+SELECT Seats INTO v_available_seats
+FROM Train
+WHERE TNO = p_train_number;
+
+IF v_available_seats >= p_seats_needed THEN
+-- Sufficient seats available, update the seat count
+UPDATE Train
+SET Seats = Seats - p_seats_needed
+WHERE TNO = p_train_number;
+
+-- Commit the transaction
+COMMIT;
+
+DBMS_OUTPUT.PUT_LINE(p_seats_needed || ' seats reserved successfully.');
+ELSE
+-- Insufficient seats available
+DBMS_OUTPUT.PUT_LINE('Sorry, there are not enough seats available.');
+END IF;
+EXCEPTION
+WHEN NO_DATA_FOUND THEN
+DBMS_OUTPUT.PUT_LINE('Invalid train number.');
+WHEN OTHERS THEN
+DBMS_OUTPUT.PUT_LINE('An error occurred: ' || SQLERRM);
+END ReserveTicket;
+/
+
+CREATE OR REPLACE PROCEDURE CancelTicket(
+p_train_number IN INT,
+p_seats_cancel IN INT
+) AS
+BEGIN
+
+-- Update seat count
+UPDATE Train
+SET Seats = Seats + p_seats_cancel
+WHERE TNO = p_train_number;
+
+-- Commit the transaction
+COMMIT;
+
+DBMS_OUTPUT.PUT_LINE(p_seats_cancel || ' seats cancelled successfully.');
+EXCEPTION
+WHEN NO_DATA_FOUND THEN
+DBMS_OUTPUT.PUT_LINE('Invalid train number.');
+WHEN OTHERS THEN
+DBMS_OUTPUT.PUT_LINE('An error occurred: ' || SQLERRM);
+END CancelTicket;
+/
+
+BEGIN
+DBMS_OUTPUT.PUT_LINE('1.TICKET RESEERVATION 2.TICKET CANCELLATION');
+END;
+/
+
+DECLARE
+train_no INT := &train_number;
+seat_need INT := &seets_needed;
+ch int := & choice;
+BEGIN
+IF ch =1 then
+ReserveTicket(train_no, seat_need);
+ELSIF ch = 2 THEN
+CancelTicket(train_no, seat_need);
+END IF;
+END;
+/
+
+OUTPUT:
+SQL> @"C:\exp11.txt";
+
+1.TICKET RESEERVATION 2.TICKET CANCELLATION
+PL/SQL procedure successfully completed.
+Enter value for train_number: 2
+old 2: train_no INT := &train_number;
+new 2: train_no INT := 2;
+Enter value for seets_needed: 5
+old 3: seat_need INT := &seets_needed;
+new 3: seat_need INT := 5;
+Enter value for choice: 1
+old 4: ch int := & choice;
+new 4: ch int := 1;
+5 seats reserved successfully.
+
+PL/SQL procedure successfully completed.
+
+SQL> @"C:\exp11.txt";
+1.TICKET RESEERVATION 2.TICKET CANCELLATION
+PL/SQL procedure successfully completed.
+Enter value for train_number: 4
+old 2: train_no INT := &train_number;
+new 2: train_no INT := 4;
+Enter value for seets_needed: 2
+old 3: seat_need INT := &seets_needed;
+new 3: seat_need INT := 2;
+Enter value for choice: 2
+old 4: ch int := & choice;
+new 4: ch int := 2;
+2 seats cancelled successfully.
+PL/SQL procedure successfully completed.
+SQL> select * from train;
+
+TNO TNAME TDATE DESTINATION SEATS
+---------- -------------------- --------- -------------------- ----------
+1 express1 16-APR-24 mumbai 300
+2 express2 16-APR-24 chennai 241
+3 express2 17-APR-24 delhi 100
+4 express4 19-APR-24 kolkata 102
+
+5 express5 20-APR-24 kota 300
