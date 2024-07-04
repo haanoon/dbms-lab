@@ -1,0 +1,166 @@
+EXPERIMENT-07
+
+AIM:
+Write a PL/SQL program to implement the following operations in a banking system:
+a. DEBIT
+Appropriate messages are to be displayed for insufficient funds or successful debit.Minimum balance of
+Rs 500 is to be maintained.
+b. CREDIT
+c. SHOW BALANCE
+After displaying the balance, a function dc is to be called, which displays the account category/type of
+customer after verifying their account balance. The following are the categories: category platinum(for
+account balance greater than 50k) , gold (account balance less than or equal to 50k but greater than 10k)
+,silver(for account balance less than or equal to 10k). Assume necessary attributes in customer.
+Write a query to retrieve the details of customers along with customer category(using the created function
+dc)
+TABLE DESIGN:
+CREATION:
+CREATE TABLE ACC(CUST_ID INT PRIMARY KEY,ACC_BALANCE INT);
+INSERTION:
+INSERT INTO ACC VALUES(1,4000);
+INSERT INTO ACC VALUES(2,5500);
+INSERT INTO ACC VALUES(3,40000);
+INSERT INTO ACC VALUES(4,36000);
+CONTENTS:
+CUST_ID ACC_BALANCE
+--------------------------------------
+1 3700
+2 5950
+3 40000
+4 42000
+
+PROGRAM:
+CREATE OR REPLACE PROCEDURE debit(p_acno IN NUMBER,p_debit_amount IN NUMBER) AS
+current_balance NUMBER;
+amount_to_debited INT;
+min_balance CONSTANT NUMBER := 500;
+BEGIN
+SELECT ACC_BALANCE INTO current_balance FROM acc
+WHERE CUST_ID = p_acno;
+IF current_balance - p_debit_amount < min_balance THEN
+dbms_output.put_line('Insufficient balance to debit ' || min_balance || ' from the account ' || p_acno);
+ELSE
+UPDATE acc SET ACC_BALANCE = current_balance - p_debit_amount WHERE CUST_ID =
+p_acno;
+dbms_output.put_line('Amount has been debited');
+END IF;
+END;
+
+/
+CREATE OR REPLACE PROCEDURE credit(p_acno IN NUMBER, p_credit_amount IN NUMBER)
+AS
+current_balance NUMBER;
+amount_to_credited INT;
+new_balance NUMBER;
+BEGIN
+SELECT ACC_BALANCE INTO current_balance FROM acc
+WHERE CUST_ID = p_acno;
+UPDATE acc SET ACC_BALANCE= current_balance + p_credit_amount WHERE CUST_ID =
+p_acno;
+dbms_output.put_line('Amount has been credited');
+SELECT ACC_BALANCE INTO new_balance FROM acc
+WHERE CUST_ID = p_acno;
+dbms_output.put_line('Latest Updated BANK BALANCE after credit '||new_balance);
+END;
+/
+CREATE OR REPLACE FUNCTION dc(amount IN NUMBER)
+RETURN VARCHAR2 IS
+category VARCHAR2(30);
+BEGIN
+IF amount > 50000 THEN
+category := 'Platinum';
+ELSIF amount > 10000 AND amount <= 50000 THEN
+category := 'Gold';
+ELSE
+category := 'Silver';
+END IF;
+RETURN category;
+END;
+/
+CREATE OR REPLACE PROCEDURE show_balance(p_acno IN NUMBER) AS
+present_balance NUMBER;
+BEGIN
+SELECT ACC_BALANCE INTO present_balance FROM acc
+WHERE CUST_ID = p_acno;
+dbms_output.put_line('BANK BALANCE of the account ' || p_acno || ' is ' || present_balance);
+dbms_output.put_line('');
+dbms_output.put_line('Account Category: ' || dc(present_balance));
+END;
+/
+BEGIN
+dbms_output.put_line('1.debit 2.credit');
+END;
+/
+DECLARE
+v_acno NUMBER := &account;
+v_debit_amount NUMBER := &amount;
+ch NUMBER :=&choice;
+BEGIN
+IF ch = 1 THEN
+debit(v_acno, v_debit_amount);
+
+show_balance(v_acno);
+ELSIF ch = 2 THEN
+credit(v_acno,v_debit_amount);
+show_balance(v_acno);
+END IF;
+END;
+/
+
+OUTPUT
+SQL> @/home/hanoon/exp7.sql
+Procedure created.
+Procedure created.
+Function created.
+Procedure created.
+1.debit 2.credit
+PL/SQL procedure successfully completed.
+Enter value for account: 2
+old 2: v_acno NUMBER := &account;
+new 2: v_acno NUMBER := 2;
+Enter value for amount: 700
+old 3: v_debit_amount NUMBER := &amount;
+new 3: v_debit_amount NUMBER := 700;
+Enter value for choice: 1
+old 4: ch NUMBER :=&choice;
+new 4: ch NUMBER :=1;
+Amount has been debited
+BANK BALANCE of the account 2 is 5250
+Account Category: Silver
+PL/SQL procedure successfully completed.
+
+CUST_ID ACC_BALANCE
+-------------------------------------
+1 3700
+2 5250
+3 40000
+4 42000
+SQL> @/home/hanoon/exp07.sql;
+Procedure created.
+Procedure created.
+Function created.
+Procedure created.
+1.debit 2.credit
+PL/SQL procedure successfully completed.
+Enter value for account: 3
+old 2: v_acno NUMBER := &account;
+
+new 2: v_acno NUMBER := 3;
+Enter value for amount: 800
+old 3: v_debit_amount NUMBER := &amount;
+new 3: v_debit_amount NUMBER := 800;
+Enter value for choice: 2
+old 4: ch NUMBER :=&choice;
+new 4: ch NUMBER :=2;
+Amount has been credited
+Latest Updated BANK BALANCE after credit 40800
+BANK BALANCE of the account 3 is 40800
+Account Category: Gold
+PL/SQL procedure successfully completed.
+SQL> SELECT * FROM ACC;
+CUST_ID ACC_BALANCE
+---------------------------------------
+1 3700
+2 5250
+3 40800
+4 42000
