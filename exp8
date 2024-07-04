@@ -1,0 +1,84 @@
+EXPERIMENT NO:8
+
+AIM
+Create a cursor that stores the details of students eligible for honours in roll number order.
+Assume that semester grades of s1 and s2 are stored in Students table along with Roll
+number and name of students. A student is eligible for honors if the total grade for s1 and
+s2 is greater than 12. Print the highest grade of the two semesters for the honors students
+using the cursor created.
+Table Design:
+Students(roll_no int,name varchar(20),s1_grade int,s2_grade int)
+SQL> create table students (roll_number int primary key,name varchar(20),s1_grade int,s2_grade
+int);
+Table created.
+SQL> desc students;
+Name Null? Type
+---------------------------------------------------------------------------------------------------------------
+ROLL_NUMBER NOT NULL NUMBER(38)
+NAME VARCHAR2(20)
+S1_GRADE NUMBER(38)
+S2_GRADE NUMBER(38)
+INSERT INTO students (roll_number, name, s1_grade, s2_grade) VALUES (1, 'John', 8, 5);
+INSERT INTO students (roll_number, name, s1_grade, s2_grade) VALUES (2, 'Alice', 7, 6);
+INSERT INTO students (roll_number, name, s1_grade, s2_grade) VALUES (3, 'Bob', 9, 4);
+INSERT INTO students (roll_number, name, s1_grade, s2_grade) VALUES (4, 'Mary', 6, 7);
+INSERT INTO students (roll_number, name, s1_grade, s2_grade) VALUES (5, 'Emma', 10, 2);
+INSERT INTO students (roll_number, name, s1_grade, s2_grade) VALUES (6, 'Sam', 4, 9);
+INSERT INTO students (roll_number, name, s1_grade, s2_grade) VALUES (7, 'Sophia', 3, 10);
+INSERT INTO students (roll_number, name, s1_grade, s2_grade) VALUES (8, 'Daniel', 5, 8);
+INSERT INTO students (roll_number, name, s1_grade, s2_grade) VALUES (9, 'Olivia', 2, 9);
+INSERT INTO students (roll_number, name, s1_grade, s2_grade) VALUES (10, 'Michael', 6, 6);
+
+INSERT INTO students (roll_number, name, s1_grade, s2_grade) VALUES (11, 'Ella', 1, 1);
+INSERT INTO students (roll_number, name, s1_grade, s2_grade) VALUES (12, 'William', 2, 2);
+SQL> select * from students;
+ROLL_NUMBER NAME S1_GRADE S2_GRADE
+----------- -------------------- ---------- ----------
+1 John 8 5
+2 Alice 7 6
+3 Bob 9 4
+4 Mary 6 7
+5 Emma 10 2
+6 Sam 4 9
+7 Sophia 3 10
+8 Daniel 5 8
+9 Olivia 2 9
+10 Michael 6 6
+11 Ella 1 1
+12 William 2 2
+12 rows selected.
+PROGRAM:
+DECLARE
+CURSOR honor_students_cur IS
+SELECT roll_number, name, GREATEST(s1_grade, s2_grade) AS highest_grade
+FROM Students
+WHERE s1_grade + s2_grade > 12
+ORDER BY roll_number;
+v_roll_number Students.roll_number%TYPE;
+v_name Students.name%TYPE;
+v_highest_grade NUMBER;
+BEGIN
+OPEN honor_students_cur;
+DBMS_OUTPUT.PUT_LINE('Roll Number | Name | Highest Grade');
+DBMS_OUTPUT.PUT_LINE('----------------------------------');
+LOOP
+FETCH honor_students_cur INTO v_roll_number, v_name, v_highest_grade;
+EXIT WHEN honor_students_cur%NOTFOUND;
+DBMS_OUTPUT.PUT_LINE(v_roll_number || ' | ' || v_name || ' | ' || v_highest_grade);
+END LOOP;
+CLOSE honor_students_cur;
+END;
+/
+OUTPUT
+SQL> @/home/cs-ai-25/hanoon/exp8.sql
+Roll Number | Name | Highest Grade
+
+----------------------------------
+1 | John | 8
+2 | Alice | 7
+3 | Bob | 9
+4 | Mary | 7
+6 | Sam | 9
+7 | Sophia | 10
+8 | Daniel | 8
+PL/SQL procedure successfully completed.
