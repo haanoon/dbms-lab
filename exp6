@@ -1,0 +1,86 @@
+EXPERIMENT 6
+
+AIM:write a PL/SQL block to find average marks of students
+in a class and print the marks,print a message “Needs
+Improvement” if the student average is less than 40 at the
+bottom print today’s date and ady of the week(i.e,
+monday,tuesday etc.)
+Table Design:
+Student_marks(name varchar(3),marks1 int,marks2 int,marks3
+int)
+create table student_marks (name varchar(3) not null,marks1
+int not null,marks2 int not null,marks3 int not null);
+insert into student_marks values ('A',75,83,69);
+
+insert into student_marks values ('B',91,98,94);
+
+insert into student_marks values ('C',68,72,67);
+
+insert into student_marks values ('D',56,49,61);
+
+insert into student_marks values ('E',90,100,73);
+
+insert into student_marks values ('F',42,50,41);
+
+insert into student_marks values ('G',36,60,59);
+
+insert into student_marks values ('H',95,89,92);
+
+insert into student_marks values ('I',36,40,43);
+
+insert into student_marks values ('J',20,20,20);
+
+select * from student_marks;
+NAM MARKS1 MARKS2 MARKS3
+--- ---------- ---------- ----------
+A 75 83 69
+B 91 98 94
+C 68 72 67
+D 56 49 61
+E 90 100 73
+F 42 50 41
+G 36 60 59
+I 36 40 43
+J 20 20 20
+PROGRAM:
+
+DECLARE
+total_marks NUMBER := 0;
+student_average INT;
+class_day VARCHAR2(20);
+BEGIN
+FOR student_rec IN (SELECT name,marks1,marks2,marks3
+FROM student_marks) LOOP
+total_marks:=0;
+total_marks := total_marks + student_rec.marks1+
+
+student_rec.marks2 + student_rec.marks3;
+student_average := total_marks / 3;
+DBMS_OUTPUT.PUT_LINE('Student Average of
+'||student_rec.name||' : '|| student_average);
+
+IF student_average < 40 THEN
+DBMS_OUTPUT.PUT_LINE('Needs improvement');
+END IF;
+END LOOP;
+SELECT TO_CHAR(SYSDATE,
+
+'Day') INTO class_day FROM DUAL;
+DBMS_OUTPUT.PUT_LINE('Today is: ' || TO_CHAR(SYSDATE,
+'DD-MON-YYYY') || ' (' || class_day || ')');
+END;
+/
+OUTPUT:
+SQL> @ exp6.sql /
+Student Average of A : 76
+Student Average of B : 94
+Student Average of C : 69
+Student Average of D : 55
+Student Average of E : 88
+Student Average of F : 44
+Student Average of G : 52
+Student Average of I : 40
+Student Average of J : 20
+Needs improvement
+Today is: 06-APR-2024 (Saturday )
+PL/SQL procedure successfully completed.
