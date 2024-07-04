@@ -1,0 +1,207 @@
+EXPERIMENT NO-5
+
+CUSTOMER-PRODUCT-PURCHASE
+
+REALTIONS
+
+AIM:
+Write queries to create and retrieve customer and product relationship.
+
+TABLE DESIGN:
+PRODUCT(pro_no varchar(15) not null,description varchar(15) not null,company varchar(15)
+notnull,price varchar(15) not null,primary key(pro_no));
+CUSTOMER(cust_no varchar(15) not null,name varchar(15) not null,age int not null,city
+varchar(15) not null,pincode int not null,state varchar(15) not null,primary key(cust_no));
+PURCHASE(order_no int not null,cust_no varchar(15) not null,pro_no varchar(15) not
+null,quantity int not null,order_date date,primary key(order_no),foreign key(pro_no) references
+PRODUCT(pro_no),foreign key(cust_no) references CUSTOMER (cust_no));
+SUPPLIER(s_no varchar(20) not null,s_name varchar(15) not null,age int not null,city
+varchar(15) not null,primary key(s_no));
+
+TABLE CREATION:
+create table PRODUCT(pro_no varchar(15) not null,description varchar(15) not null,company
+varchar(15) not null,price varchar(15) not null,primary key(pro_no));
+Table created.
+SQL> desc PRODUCT
+Name Null? Type
+----------------------------------------- -------- ----------------------------
+PRO_NO NOT NULL VARCHAR2(15)
+DESCRIPTION NOT NULL VARCHAR2(15)
+COMPANY NOT NULL VARCHAR2(15)
+PRICE NOT NULL VARCHAR2(15)
+create table CUSTOMER(cust_no varchar(15) not null,name varchar(15) not null,age int not
+null,city varchar(15) not null,pincode int not null,state varchar(15) not null,primary
+key(cust_no));
+Table created.
+SQL> desc CUSTOMER
+Name Null? Type
+----------------------------------------- -------- ----------------------------
+CUST_NO NOT NULL VARCHAR2(15)
+
+NAME NOT NULL VARCHAR2(15)
+AGE NOT NULL NUMBER(38)
+CITY NOT NULL VARCHAR2(15)
+PINCODE NOT NULL NUMBER(38)
+STATE NOT NULL VARCHAR2(15)
+create table PURCHASE(order_no VARCHAR(15) not null,cust_no varchar(15) not null,pro_no
+varchar(15) not null,quantity int not null,order_date date,primary key(order_no),foreign
+key(pro_no) references PRODUCT(pro_no),foreign key(cust_no) references CUSTOMER
+(cust_no));
+Table created.
+SQL> desc PURCHASE
+Name Null? Type
+----------------------------------------- -------- ----------------------------
+ORDER_NO NOT NULL VARCHAR2(15)
+CUST_NO NOT NULL VARCHAR2(15)
+PRO_NO NOT NULL VARCHAR2(15)
+QUANTITY NOT NULL NUMBER(38)
+ORDER_DATE DATE
+create table SUPPLIER(s_no varchar(20) not null,s_name varchar(15) not null,age int not
+null,city varchar(15) not null,primary key(s_no));
+Table created.
+SQL> desc SUPPLIER
+Name Null? Type
+----------------------------------------- -------- ----------------------------
+S_NO NOT NULL VARCHAR2(20)
+S_NAME NOT NULL VARCHAR2(15)
+AGE NOT NULL NUMBER(38)
+CITY NOT NULL VARCHAR2(15)
+TABLE INSERTION:
+insert into CUSTOMER values ('C0001','Ivan',35,'Bombay',40054,'Maharashtra');
+1 row created.
+insert into CUSTOMER values ('C0002','Vandana',35,'Madras',78001,'Tamilnadu');
+1 row created.
+insert into CUSTOMER values ('C0003','pramada',55,'Bombay',40057,'Maharashtra');
+1 row created.
+SQL> insert into CUSTOMER values ('C0004','Basu',45,'Bombay',40056,'Maharashtra');
+1 row created.
+SQL> insert into CUSTOMER values ('C0005','Ravi',25,'Delhi',100001,'Delhi');
+1 row created.
+SQL> insert into CUSTOMER values ('C0006','Rukmini',25,'Madras',780001,'Tamilnadu');
+1 row created.
+SQL> select * from CUSTOMER;
+
+CUST_NO NAME AGE CITY PINCODE STATE
+--------------- --------------- ---------- --------------- ---------- ---------------
+C0001 Ivan 35 Bombay 40054 Maharashtra
+C0002 Vandana 35 Madras 78001 Tamilnadu
+C0003 pramada 55 Bombay 40057 Maharashtra
+C0004 Basu 45 Bombay 40056 Maharashtra
+C0005 Ravi 25 Delhi 100001 Delhi
+C0006 Rukmini 25 Madras 780001 Tamilnadu
+6 rows selected.
+insert into PRODUCT values ('P0001','12 w floodlight','wipro','5000');
+1 row created.
+SQL> insert into PRODUCT values ('P0002','laptop adapter','Dell','1560');
+1 row created.
+SQL> insert into PRODUCT values ('P0003','tablet','hcl','11000');
+1 row created.
+insert into PRODUCT values ('P0004','Garnet 50w led','wipro','999');
+1 row created.
+insert into PRODUCT values ('P0005','laptop charger','hcl','1690');
+1 row created.
+SQL> select * from PRODUCT;
+PRO_NO DESCRIPTION COMPANY PRICE
+--------------- --------------- --------------- ---------------
+P0001 12 w floodlight wipro 5000
+P0002 laptop adapter Dell 1560
+P0003 tablet hcl 11000
+P0004 Garnet 50w led wipro 999
+P0005 laptop charger hcl 1690
+insert into PURCHASE values ('O0001','C0002','P0003',2,'20-01-2016');
+1 row created.
+SQL> insert into PURCHASE values ('O0002','C0003','P0002',1,'27-01-2016');
+1 row created.
+SQL> insert into PURCHASE values ('O0003','C0006','P0001',3,'20-02-2016');
+1 row created.
+SQL> insert into PURCHASE values ('O0004','C0003','P0005',4,'07-03-2016');
+1 row created.
+SQL> insert into PURCHASE values ('O0005','C0004','P0002',2,'22-05-2016');
+1 row created.
+SQL> insert into PURCHASE values ('O0006','C0005','P0004',1,'26-05-2016');
+1 row created.
+SQL> select * from PURCHASE;
+ORDER_NOCUST_NO PRO_NO QUANTITY ORDER_DA
+--------------- --------------- --------------- ---------- --------
+O0001 C0002 P0003 2 20-01-16
+O0002 C0003 P0002 1 27-01-16
+
+O0003 C0006 P0001 3 20-02-16
+O0004 C0003 P0005 4 07-03-16
+O0005 C0004 P0002 2 22-05-16
+O0006 C0005 P0004 1 26-05-16
+6 rows selected.
+SQL> insert into SUPPLIER values ('S001','Ivan',35,'Bombay');
+1 row created.
+SQL> insert into SUPPLIER values ('S002','Nirmala',35,'Madras');
+1 row created.
+SQL> insert into SUPPLIER values ('S003','Susmitha',55,'Bombay');
+1 row created.
+insert into SUPPLIER values ('S004','Basu',45,'Bombay');
+1 row created.
+SQL> insert into SUPPLIER values ('S005','Ravi',25,'Delhi');
+1 row created.
+SQL> insert into SUPPLIER values ('S006','Nanda',25,'Madras');
+1 row created.
+SQL> select * from SUPPLIER;
+S_NO S_NAME AGE CITY
+-------------------- --------------- ---------- ---------------
+S001 Ivan 35 Bombay
+S002 Nirmala 35 Madras
+S003 Susmitha 55 Bombay
+S004 Basu 45 Bombay
+S005 Ravi 25 Delhi
+S006 Nanda 25 Madras
+6 rows selected.
+
+QUERIES:
+1.List customer numbers of all who have purchased products with cost more than Rs1600.
+select cust_no,prodno from purchase where prodno in (select prodno from product where price>1600);
+
+CUST_NO PRODNO
+--------------- ---------------
+C00002 P00003
+C00006 P00001
+C00003 P00005
+2.Get customer numbers of purchase such that the quantity is more than maximum quantity of all
+puchases of C00002.
+select cust_no,quantity from purchase where quantity > (select max(quantity) from purchase where
+cust_no = 'C00002');
+CUST_NO QUANTITY
+--------------- ----------
+
+C00004 3
+C00006 3
+C00003 4
+3.Get the name of all customers who have purchases at least one item from Wipro.
+SQL> select name from customer where cust_no in (select cust_no from purchase where prodno in (select
+prodno from product where company = 'Wipro'));
+NAME
+---------------
+Rukmini
+Ravi Sreedharan
+4.List all customer number pairs such that cost of the item purchased by the first customer is less
+than that of second customer.
+SQL> select c1.cust_no first_cust,c2.cust_no second_cust,c1.prodno first_prod,c2.prodno
+second_prod from purchase c1,purchase c2 where (select price from product where
+prodno=c1.prodno)<(select price from product where prodno=c2.prodno);
+FIRST_CUST SECOND_CUST FIRST_PROD SECOND_PROD
+--------------- --------------- --------------- ---------------
+C0003 C0002 P00002 P00003
+C0003 C0006 P00002 P00001
+C0003 C0003 P00002 P00005
+C0004 C0002 P00002 P00003
+C0004 C0006 P00002 P00001
+C0004 C0003 P00002 P00005
+C0006 C0002 P00001 P00003
+C0003 C0002 P00005 P00003
+C0003 C0006 P00005 P00001
+C0004 C0002 P00002 P00003
+C0004 C0006 P00002 P00001
+C0004 C0003 P00002 P00005
+C0005 C0002 P00004 P00003
+C0005 C0003 P00004 P00002
+C0005 C0004 P00004 P00002
+c0005 c0006 p00004 p00001
+c0005 c0003 p00004 p00005
+c0005 c0004 p00004 p00002
